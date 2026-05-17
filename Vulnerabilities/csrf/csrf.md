@@ -2,7 +2,7 @@ CSRF VULNERABILITY ASSESSMENT REPORT
 
 Target Application: DVWA (Damn Vulnerable Web Application)
 Vulnerability Type: Cross-Site Request Forgery (CSRF)
-Security Level: Low
+Security Level:
 Severity: High
 Testing Environment: Educational Lab
 
