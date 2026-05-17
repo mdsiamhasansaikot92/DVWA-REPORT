@@ -2,7 +2,7 @@ COMMAND INJECTION VULNERABILITY ASSESSMENT REPORT
 
 Target Application: DVWA (Damn Vulnerable Web Application)
 Vulnerability Type: Command Injection
-Security Level:
+Security Level: Low
 Severity: Critical
 Testing Environment: Educational Lab
 
