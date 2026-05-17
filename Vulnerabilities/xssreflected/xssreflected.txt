@@ -1,0 +1,163 @@
+REFLECTED XSS VULNERABILITY ASSESSMENT REPORT
+
+Target Application: DVWA (Damn Vulnerable Web Application)
+Vulnerability Type: Reflected Cross-Site Scripting (XSS)
+Security Level:
+Severity: High
+Testing Environment: Educational Lab
+
+INTRODUCTION
+
+This report documents the exploitation of a Reflected Cross-Site Scripting (XSS) vulnerability in DVWA at the Low security level.
+
+Reflected XSS occurs when user-supplied input is immediately reflected back into a webpage without proper sanitization or output encoding. Attackers can exploit this vulnerability to execute malicious JavaScript code in the victim’s browser.
+
+The assessment demonstrates how insecure handling of user input can lead to client-side code execution.
+
+OBJECTIVE
+
+The objective of this assessment was to:
+
+Identify reflected XSS vulnerabilities
+Execute JavaScript code in the browser
+Analyze input reflection behavior
+Demonstrate risks associated with missing output encoding
+TOOLS USED
+Web Browser
+DVWA
+JavaScript Payloads
+HTML Injection Techniques
+VULNERABILITY DESCRIPTION
+
+The DVWA Reflected XSS module at the Low security level reflects user input directly into the webpage response without applying proper sanitization or encoding.
+
+Because of this, attackers can inject malicious scripts that execute in the victim’s browser.
+
+The application fails to filter dangerous HTML and JavaScript characters such as:
+
+<
+"
+'
+EXPLOITATION PROCESS
+
+Step 1: Access the Reflected XSS Module
+
+The DVWA Reflected XSS page was opened from the vulnerabilities menu.
+
+An input field was presented for user-supplied data.
+
+Step 2: Submit XSS Payload
+
+The following payload was entered into the input field:
+
+<script>alert('XSS')</script>
+
+The form was submitted.
+
+OBSERVED RESULT
+
+A JavaScript popup alert appeared in the browser displaying:
+
+XSS
+
+This confirmed that the injected JavaScript code executed successfully in the browser context.
+
+WHY THE ATTACK WORKS
+
+The vulnerability exists because user input is directly reflected into the HTML response without:
+
+Input sanitization
+Output encoding
+Script filtering
+HTML escaping
+
+As a result, the browser interprets the injected payload as executable JavaScript.
+
+ADDITIONAL TEST PAYLOADS
+
+Alternative payloads were tested successfully.
+
+Payload 1:
+
+<img src=x onerror=alert(1)>
+
+Payload 2:
+
+"><script>alert(1)</script>
+
+Payload 3:
+
+<svg/onload=alert('XSS')>
+
+OBSERVED RESULT
+
+All payloads executed successfully within the browser.
+
+This confirmed that multiple HTML and JavaScript injection vectors were possible.
+
+ROOT CAUSE
+
+The vulnerability exists because the application reflects user-controlled input directly into webpage content without applying secure output handling mechanisms.
+
+Missing protections include:
+
+Input validation
+Output encoding
+HTML escaping
+JavaScript filtering
+Content Security Policy (CSP)
+SECURITY IMPACT
+
+An attacker exploiting this vulnerability may be able to:
+
+Execute arbitrary JavaScript
+Steal session cookies
+Hijack user sessions
+Redirect users to malicious websites
+Capture user input
+Perform phishing attacks
+Modify webpage content
+
+Because malicious scripts execute within the victim’s browser session, the impact is considered High.
+
+RECOMMENDATIONS
+
+The following mitigations are recommended:
+
+Implement Output Encoding
+
+Encode user input before rendering it in HTML responses.
+
+Sanitize User Input
+
+Filter dangerous HTML and JavaScript characters.
+
+Use Secure Framework Functions
+
+Use built-in escaping and templating protections provided by modern frameworks.
+
+Implement Content Security Policy (CSP)
+
+Restrict execution of unauthorized scripts.
+
+Validate Input Context
+
+Apply proper encoding based on output location:
+
+HTML
+JavaScript
+URL
+Attribute context
+Use HTTPOnly Cookies
+
+Prevent JavaScript access to session cookies.
+
+Perform Regular Security Testing
+
+Conduct vulnerability scanning and penetration testing for XSS weaknesses.
+
+CONCLUSION
+
+The assessment confirmed that the DVWA application at the Low security level is vulnerable to Reflected Cross-Site Scripting attacks.
+
+Because the application directly reflects unsanitized user input into webpage responses, attackers can execute arbitrary JavaScript code in the victim’s browser.
