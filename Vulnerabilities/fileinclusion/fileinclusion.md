@@ -1,6 +1,6 @@
 FILE INCLUSION VULNERABILITY ASSESSMENT REPORT
 
-Target Application: DVWA (Damn Vulnerable Web Application)
+Target Application:  DVWA (Damn Vulnerable Web Application)
 Vulnerability Type: File Inclusion (LFI/RFI)
 Security Level:
 Severity: Critical
