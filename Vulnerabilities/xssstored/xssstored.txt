@@ -1,1 +1,162 @@
+STORED XSS VULNERABILITY ASSESSMENT REPORT
 
+Target Application: DVWA (Damn Vulnerable Web Application)
+Vulnerability Type: Stored Cross-Site Scripting (Stored XSS)
+Security Level:
+Severity: High
+Testing Environment: Educational Lab
+
+INTRODUCTION
+
+This report documents the exploitation of a Stored Cross-Site Scripting (XSS) vulnerability in DVWA at the Low security level.
+
+Stored XSS occurs when malicious input submitted by a user is permanently stored by the application and later displayed to other users without proper sanitization or output encoding.
+
+Unlike Reflected XSS, the malicious payload persists within the application database and executes automatically whenever the affected page is viewed.
+
+OBJECTIVE
+
+The objective of this assessment was to:
+
+Identify Stored XSS vulnerabilities
+Inject persistent JavaScript payloads
+Execute JavaScript within user browsers
+Analyze insecure data storage and output handling
+TOOLS USED
+Web Browser
+DVWA
+JavaScript Payloads
+HTML Injection Techniques
+VULNERABILITY DESCRIPTION
+
+The DVWA Stored XSS module at the Low security level stores user input directly into the backend database without applying proper sanitization or output encoding.
+
+When stored content is displayed on the webpage, the browser interprets malicious scripts as executable code.
+
+Because of this, attackers can inject persistent JavaScript payloads that execute automatically whenever users access the affected page.
+
+EXPLOITATION PROCESS
+
+Step 1: Access the Stored XSS Module
+
+The DVWA Stored XSS page was opened from the vulnerabilities menu.
+
+The application provided:
+
+Name field
+Message field
+
+Step 2: Submit Malicious Payload
+
+The following payload was entered into the Name field:
+
+<script>alert('XSS')</script>
+
+A sample message was entered into the Message field.
+
+The "Sign Guestbook" button was clicked.
+
+OBSERVED RESULT
+
+Immediately after submission, a JavaScript popup alert appeared displaying:
+
+XSS
+
+The payload was stored successfully inside the application database.
+
+PERSISTENT EXECUTION
+
+Whenever the guestbook page was revisited, the malicious payload executed automatically again.
+
+The payload also executed for any additional users visiting the affected page.
+
+This confirmed that the vulnerability was persistent and stored server-side.
+
+ADDITIONAL TEST PAYLOADS
+
+Alternative payloads were tested successfully.
+
+Payload 1:
+
+<img src=x onerror=alert('XSS')>
+
+Payload 2:
+
+<svg/onload=alert('Stored XSS')>
+
+Payload 3:
+
+<marquee onstart=alert(1)>XSS</marquee>
+
+OBSERVED RESULT
+
+All payloads executed successfully when the guestbook entries were loaded in the browser.
+
+This confirmed that multiple HTML and JavaScript injection techniques were possible.
+
+ROOT CAUSE
+
+The vulnerability exists because the application stores and displays user-supplied input without implementing proper security protections.
+
+Missing protections include:
+
+Input sanitization
+Output encoding
+HTML escaping
+Script filtering
+Content Security Policy (CSP)
+
+The application trusts user-controlled content and renders it directly within webpage output.
+
+SECURITY IMPACT
+
+An attacker exploiting this vulnerability may be able to:
+
+Execute arbitrary JavaScript
+Hijack user sessions
+Steal session cookies
+Redirect users to malicious websites
+Capture sensitive information
+Perform phishing attacks
+Modify webpage content
+Target all users visiting the page
+
+Because malicious scripts persist within the application database and affect multiple users, Stored XSS is considered more dangerous than Reflected XSS.
+
+RECOMMENDATIONS
+
+The following mitigations are recommended:
+
+Sanitize User Input
+
+Filter dangerous HTML and JavaScript content before storing data.
+
+Implement Output Encoding
+
+Encode user-generated content before displaying it in webpages.
+
+Use Secure Framework Protections
+
+Enable built-in XSS filtering and escaping features provided by modern frameworks.
+
+Implement Content Security Policy (CSP)
+
+Restrict execution of unauthorized scripts within the browser.
+
+Validate Input Length and Format
+
+Restrict unexpected input types and dangerous characters.
+
+Use HTTPOnly Cookies
+
+Prevent JavaScript access to session cookies.
+
+Perform Security Testing
+
+Conduct regular penetration testing and vulnerability scanning for XSS issues.
+
+CONCLUSION
+
+The assessment confirmed that the DVWA application at the Low security level is vulnerable to Stored Cross-Site Scripting attacks.
+
+Because the application stores unsanitized user input and reflects it directly into webpage content, attackers can inject persistent JavaScript code that executes automatically whenever users visit the affected page.
