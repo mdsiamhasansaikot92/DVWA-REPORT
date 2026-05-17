@@ -2,7 +2,7 @@ BRUTE FORCE VULNERABILITY ASSESSMENT REPORT
 
 Target Application: DVWA (Damn Vulnerable Web Application)
 Vulnerability Type: Brute Force Authentication Attack
-Security Level: Low
+Security Level:
 Testing Tool: Burp Suite
 Severity: High
 
