@@ -1,0 +1,205 @@
+BLIND SQL INJECTION VULNERABILITY ASSESSMENT REPORT
+
+Target Application: DVWA (Damn Vulnerable Web Application)
+Vulnerability Type: Blind SQL Injection
+Security Level:
+Severity: Critical
+Testing Environment: Educational Lab
+
+INTRODUCTION
+
+This report documents the exploitation of a Blind SQL Injection vulnerability in DVWA at the Low security level.
+
+Blind SQL Injection occurs when an application is vulnerable to SQL injection but does not directly display database query results or error messages. Instead, attackers infer information by analyzing differences in application behavior, such as response messages or page content.
+
+The assessment demonstrates how attackers can extract sensitive database information using Boolean-based conditions.
+
+OBJECTIVE
+
+The objective of this assessment was to:
+
+Identify Blind SQL Injection vulnerabilities
+Analyze application response behavior
+Extract information using Boolean-based logic
+Demonstrate risks associated with insecure database queries
+TOOLS USED
+Web Browser
+DVWA
+SQL Injection Payloads
+Boolean-Based SQL Queries
+VULNERABILITY DESCRIPTION
+
+The DVWA Blind SQL Injection module at the Low security level processes user input directly within SQL queries without proper sanitization or parameterized statements.
+
+Although database results are not displayed directly, the application behavior changes depending on whether injected conditions evaluate as TRUE or FALSE.
+
+This allows attackers to infer sensitive database information character by character.
+
+EXPLOITATION PROCESS
+
+Step 1: Access the Blind SQL Injection Module
+
+The DVWA Blind SQL Injection page was opened from the vulnerabilities menu.
+
+The application provided a numeric ID lookup field.
+
+Step 2: Test Normal Functionality
+
+A valid ID was entered:
+
+1
+
+The application returned a message similar to:
+
+User ID exists in the database.
+
+Step 3: Test Invalid Input
+
+An invalid ID was entered:
+
+999
+
+The application returned:
+
+User ID is MISSING from the database.
+
+This confirmed that application responses differed based on query results.
+
+TESTING FOR SQL INJECTION
+
+A Boolean-based SQL Injection payload was tested.
+
+Payload Used:
+
+1' OR 1=1#
+
+OBSERVED RESULT
+
+The application returned:
+
+User ID exists in the database.
+
+The injected condition:
+
+OR 1=1
+
+always evaluates as TRUE, confirming that SQL Injection was possible.
+
+FALSE CONDITION TEST
+
+A false Boolean condition was tested.
+
+Payload Used:
+
+1' AND 1=2#
+
+OBSERVED RESULT
+
+The application returned:
+
+User ID is MISSING from the database.
+
+This demonstrated that application behavior changed depending on the truth value of injected SQL conditions.
+
+BOOLEAN-BASED DATA EXTRACTION
+
+Character-by-character extraction was performed using SQL substring functions.
+
+Example Payload:
+
+1' AND SUBSTRING(user,1,1)='a'#
+
+EXTRACTION LOGIC
+
+The payload checks whether:
+
+The first character of the username
+For the current database record
+Matches the specified character
+
+If TRUE:
+The application displays:
+
+User ID exists in the database.
+
+If FALSE:
+The application displays:
+
+User ID is MISSING from the database.
+
+ENUMERATION PROCESS
+
+By iterating through different characters and positions, attackers can gradually extract:
+
+Usernames
+Password hashes
+Database names
+Table names
+Column names
+
+The process can be repeated character-by-character until complete information is recovered.
+
+ROOT CAUSE
+
+The vulnerability exists because user input is directly incorporated into SQL queries without proper security protections.
+
+Missing protections include:
+
+Parameterized queries
+Prepared statements
+Input validation
+Query sanitization
+Output handling protections
+
+The application trusts user-controlled input within database operations.
+
+SECURITY IMPACT
+
+An attacker exploiting this vulnerability may be able to:
+
+Extract sensitive database information
+Enumerate database structure
+Retrieve usernames and password hashes
+Bypass authentication
+Gain unauthorized access
+Fully compromise the database
+
+Although query results are not displayed directly, attackers can still retrieve data using application behavior analysis.
+
+RECOMMENDATIONS
+
+The following mitigations are recommended:
+
+Use Parameterized Queries
+
+Implement prepared statements instead of directly concatenating user input into SQL queries.
+
+Validate User Input
+
+Restrict input to expected data types and formats.
+
+Use Stored Procedures
+
+Limit direct SQL query manipulation risks.
+
+Hide Application Behavior Differences
+
+Avoid returning distinguishable responses for valid and invalid queries.
+
+Apply Least Privilege
+
+Restrict database account permissions used by the application.
+
+Use Web Application Firewalls (WAF)
+
+Detect and block malicious SQL injection patterns.
+
+Perform Security Testing
+
+Conduct regular penetration testing and vulnerability assessments.
+
+CONCLUSION
+
+The assessment confirmed that the DVWA application at the Low security level is vulnerable to Blind SQL Injection attacks.
+
+Because the application directly processes unsanitized user input within SQL queries and exposes behavioral differences in responses, attackers can infer and extract sensitive database information through Boolean-based techniques.
